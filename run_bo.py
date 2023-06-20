@@ -66,7 +66,7 @@ if __name__ == '__main__':
     model_path = os.path.join(model_dir, model_file_name)
     model = JTNNVAE(hidden_size, latent_size, depthT, args.encode, args.pred)
     print(f"loading model from {model_path}...")
-    model.load_state_dict(torch.load(model_path))
+    model.load_state_dict(torch.load(model_path, map_location=torch.device('cpu')))
 
     log_folder_name = args.model + "_" + task_name + "_iter_" + str(args.model_iter) + "_ls" + str(args.latent_size)
     if args.gaussian:
@@ -85,8 +85,10 @@ if __name__ == '__main__':
         os.makedirs(log_file_path)
         print(f"creating log filepath {log_file_path}...")
 
-    if cuda:
-        model = model.cuda()
+    # if cuda:
+    #     model = model.cuda()
+    # else:
+    model = model.cpu()
 
     # other parameters
     jobs = args.jobs
@@ -146,8 +148,10 @@ if __name__ == '__main__':
         if args.gaussian:
             latent_vec = uniform_2_gaussian(latent_vec)
         vect = torch.tensor(latent_vec).float().reshape(1, -1)
-        if cuda:
-            vect = vect.cuda()
+        # if cuda:
+        #     vect = vect.cuda()
+        # else:
+        vect = vect.cpu()
         adj, attr = decode_graph(model, vect)
 
         if args.cache:

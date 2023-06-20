@@ -9,7 +9,7 @@ from torch.autograd import Variable
 
 def create_var(tensor, requires_grad=None):
     if requires_grad is None:
-        return Variable(tensor).cuda()
+        return Variable(tensor).cpu()
     else:
         return Variable(tensor, requires_grad=requires_grad).cuda()
 
